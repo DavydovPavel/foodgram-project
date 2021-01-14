@@ -11,6 +11,5 @@ urlpatterns = [
     path("wishlist/", views.wishlist, name="wishlist"),
     path("<username>/", views.user_page, name="user"),
     path("<username>/<int:recipe_id>/", views.recipe_page, name="recipe"),
-    path("<username>/<recipe_id>/edit/", views.edit_recipe,
-         name="edit_recipe")
+    path("<username>/<recipe_id>/edit/", views.edit_recipe, name="edit_recipe")
 ]
