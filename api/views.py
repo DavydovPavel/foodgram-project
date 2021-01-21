@@ -2,7 +2,6 @@ import json
 from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-
 from recipes.models import Recipe, Ingredient, RecipeIngredient
 from users.models import Favorites, Wishlist, Follow
 
@@ -15,7 +14,7 @@ def add_favorite(request):
     body = json.loads(request.body)
     recipe_id = int(body['id'])
     user = request.user
-    _, created = Favorites.objects.get_or_create(
+    created = Favorites.objects.get_or_create(
         user_id=user.id, recipe_id=recipe_id)
     return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
@@ -23,7 +22,7 @@ def add_favorite(request):
 @require_http_methods(["DELETE"])
 def remove_favorite(request, recipe_id):
     user = request.user
-    _, deleted = Favorites.objects.filter(
+    deleted = Favorites.objects.filter(
         user_id=user.id, recipe_id=recipe_id).delete()
     return SUCCESS_RESPONSE if deleted else FAIL_RESPONSE
 
@@ -33,7 +32,7 @@ def add_wishlist(request):
     body = json.loads(request.body)
     recipe_id = int(body['id'])
     user = request.user
-    _, created = Wishlist.objects.get_or_create(
+    created = Wishlist.objects.get_or_create(
         user_id=user.id, recipe_id=recipe_id)
     return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
@@ -41,7 +40,7 @@ def add_wishlist(request):
 @require_http_methods(["DELETE"])
 def remove_wishlist(request, recipe_id):
     user = request.user
-    _, deleted = Wishlist.objects.filter(
+    deleted = Wishlist.objects.filter(
         user_id=user.id, recipe_id=recipe_id).delete()
     return SUCCESS_RESPONSE if deleted else FAIL_RESPONSE
 
@@ -52,7 +51,7 @@ def add_subscription(request):
     following_id = int(body['id'])
     user = request.user
     if user.id != following_id:
-        _, created = Follow.objects.get_or_create(
+        created = Follow.objects.get_or_create(
             subscriber_id=user.id, following_id=following_id)
     return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
@@ -60,7 +59,7 @@ def add_subscription(request):
 @require_http_methods(["DELETE"])
 def remove_subscription(request, following_id):
     user = request.user
-    _, deleted = Follow.objects.filter(
+    deleted = Follow.objects.filter(
         subscriber_id=user.id, following_id=following_id).delete()
     return SUCCESS_RESPONSE if deleted else FAIL_RESPONSE
 
@@ -97,7 +96,6 @@ def get_wishlist(request):
     for k, v in ingredients.items():
         wishlist.append(f'{k.title} - {v} {k.dimension} \n')
     wishlist.append('\n\n\n\n')
-    wishlist.append('foodgram')
 
     response = HttpResponse(wishlist, 'Content-Type: text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
