@@ -1,7 +1,9 @@
-from .models import TAG_CHOICES
-from django.db.models import Q
-from functools import reduce
 import operator
+from functools import reduce
+
+from django.db.models import Q
+
+from .models import TAG_CHOICES
 
 
 def tag_collect(request):

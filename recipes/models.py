@@ -1,14 +1,14 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.shortcuts import get_object_or_404
 from multiselectfield import MultiSelectField
 
 User = get_user_model()
 
 
-TAG_CHOICES = (('breakfast', 'Завтрак'),
-               ('lunch', 'Обед'),
-               ('dinner', 'Ужин'))
+TAG_CHOICES = (("breakfast", "Завтрак"),
+               ("lunch", "Обед"),
+               ("dinner", "Ужин"))
 
 
 class Recipe(models.Model):
@@ -19,7 +19,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата публикации")
     tags = MultiSelectField(choices=TAG_CHOICES, blank=True,
-        null=True, verbose_name="Теги")
+                            null=True, verbose_name="Теги")
     description = models.TextField(
         blank=True, null=True, verbose_name="Описание")
     time = models.PositiveIntegerField(verbose_name="Время приготовления")
@@ -28,32 +28,37 @@ class Recipe(models.Model):
         blank=True, null=True,
         verbose_name="Изображение")
 
+    class Meta:
+        ordering = ["-pub_date"]
+        verbose_name = "Рецепты"
+        verbose_name_plural = "Рецепты"
+
     def __str__(self):
         return self.title
 
-    class Meta:
-        ordering = ["-pub_date"]
-        verbose_name = 'Рецепты'
-        verbose_name_plural = 'Рецепты'
-
 
 class Ingredient(models.Model):
-    title = models.CharField(max_length=150, verbose_name="Название ингредиента")
-    dimension = models.CharField(max_length=25, verbose_name="Единица измерения")
+    title = models.CharField(
+        max_length=150, verbose_name="Название ингредиента")
+    dimension = models.CharField(
+        max_length=25, verbose_name="Единица измерения")
+
+    class Meta:
+        verbose_name = "Ингредиенты"
+        verbose_name_plural = "Ингредиенты"
 
     def __str__(self):
         return f"{self.title} / {self.dimension}"
 
-    class Meta:
-        verbose_name = 'Ингредиенты'
-        verbose_name_plural = 'Ингредиенты'
-
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name="Рецепт")
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, verbose_name="Ингредиент")
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, verbose_name="Рецепт")
+    ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.CASCADE, verbose_name="Ингредиент")
     amount = models.PositiveIntegerField(verbose_name="Количество")
 
     def add_ingredient(self, recipe_id, title, amount):
         ingredient = get_object_or_404(Ingredient, title=title)
-        return self.objects.get_or_create(recipe_id=recipe_id, ingredient=ingredient, amount=amount)
+        return self.objects.get_or_create(
+            recipe_id=recipe_id, ingredient=ingredient, amount=amount)

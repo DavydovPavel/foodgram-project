@@ -1,9 +1,11 @@
 import json
+
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
-from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
-from recipes.models import Recipe, Ingredient, RecipeIngredient
-from users.models import Favorites, Wishlist, Follow
+
+from recipes.models import Ingredient, Recipe, RecipeIngredient
+from users.models import Favorites, Follow, Wishlist
 
 SUCCESS_RESPONSE = JsonResponse({"success": True})
 FAIL_RESPONSE = HttpResponse()
@@ -12,11 +14,14 @@ FAIL_RESPONSE = HttpResponse()
 @require_http_methods(["POST"])
 def add_favorite(request):
     body = json.loads(request.body)
-    recipe_id = int(body['id'])
+    recipe_id = body.get('id', None)
     user = request.user
-    created = Favorites.objects.get_or_create(
+    _, created = Favorites.objects.get_or_create(
         user_id=user.id, recipe_id=recipe_id)
-    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
+    if created and recipe_id is not None:
+        return SUCCESS_RESPONSE
+    else:
+        FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
@@ -30,11 +35,14 @@ def remove_favorite(request, recipe_id):
 @require_http_methods(["POST"])
 def add_wishlist(request):
     body = json.loads(request.body)
-    recipe_id = int(body['id'])
+    recipe_id = body.get("id", None)
     user = request.user
-    created = Wishlist.objects.get_or_create(
+    _, created = Wishlist.objects.get_or_create(
         user_id=user.id, recipe_id=recipe_id)
-    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
+    if created and recipe_id is not None:
+        return SUCCESS_RESPONSE
+    else:
+        FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
@@ -48,10 +56,10 @@ def remove_wishlist(request, recipe_id):
 @require_http_methods(["POST"])
 def add_subscription(request):
     body = json.loads(request.body)
-    following_id = int(body['id'])
+    following_id = body.get("id", None)
     user = request.user
-    if user.id != following_id:
-        created = Follow.objects.get_or_create(
+    if user.id != following_id and following_id is not None:
+        _, created = Follow.objects.get_or_create(
             subscriber_id=user.id, following_id=following_id)
     return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
@@ -84,19 +92,19 @@ def get_wishlist(request):
     wishlist_filter = Wishlist.objects.filter(
         user_id=user.id).values_list("recipe", flat=True)
     ingredient_filter = RecipeIngredient.objects.filter(
-        recipe_id__in=wishlist_filter).order_by('ingredient')
+        recipe_id__in=wishlist_filter).order_by("ingredient")
     ingredients = {}
     for ingredient in ingredient_filter:
-        if ingredient.ingredient in ingredients.keys():
+        if ingredient.ingredient in ingredients:
             ingredients[ingredient.ingredient] += ingredient.amount
         else:
             ingredients[ingredient.ingredient] = ingredient.amount
 
     wishlist = []
     for k, v in ingredients.items():
-        wishlist.append(f'{k.title} - {v} {k.dimension} \n')
-    wishlist.append('\n\n\n\n')
+        wishlist.append(f"{k.title} - {v} {k.dimension} \n")
+    wishlist.append("\n\n\n\n")
 
-    response = HttpResponse(wishlist, 'Content-Type: text/plain')
-    response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
+    response = HttpResponse(wishlist, "Content-Type: text/plain")
+    response["Content-Disposition"] = 'attachment; filename="wishlist.txt"'
     return response
