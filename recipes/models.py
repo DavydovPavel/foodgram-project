@@ -6,9 +6,14 @@ from multiselectfield import MultiSelectField
 User = get_user_model()
 
 
-TAG_CHOICES = (("breakfast", "Завтрак"),
-               ("lunch", "Обед"),
-               ("dinner", "Ужин"))
+BR = "breakfast"
+LU = "lunch"
+DIN = "dinner"
+TAG_CHOICES = [
+    (BR, "Завтрак"),
+    (LU, "Обед"),
+    (DIN, "Ужин")
+]
 
 
 class Recipe(models.Model):

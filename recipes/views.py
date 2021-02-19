@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
+from foodgram.settings import PER_PAGE
+
 from .forms import RecipeForm
 from .helper import tag_collect
 from .models import Recipe, RecipeIngredient
@@ -13,10 +15,10 @@ User = get_user_model()
 def index(request):
     tags, tags_filter = tag_collect(request)
     if tags_filter:
-        recipes = Recipe.objects.filter(tags_filter).all()
+        recipes = Recipe.objects.filter(tags_filter)
     else:
         recipes = Recipe.objects.all()
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
@@ -32,10 +34,10 @@ def user_page(request, username):
     tags, tags_filter = tag_collect(request)
     if tags_filter:
         recipes = Recipe.objects.filter(tags_filter).filter(
-            author_id=author.id).all()
+            author_id=author.id)
     else:
         recipes = Recipe.objects.filter(author_id=author.id)
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
@@ -48,13 +50,12 @@ def user_page(request, username):
 
 
 def recipe_page(request, username, recipe_id):
-    author = get_object_or_404(User, username=username)
-    recipe = get_object_or_404(Recipe, id=recipe_id, author_id=author.id)
+    recipe = get_object_or_404(Recipe, id=recipe_id, author__username=username)
     ingredients = RecipeIngredient.objects.filter(recipe_id=recipe_id)
     context = {
         "recipe": recipe,
         "ingredients": ingredients,
-        "author": author
+        "author": username
     }
     return render(request, "recipe_page.html", context)
 
@@ -64,7 +65,7 @@ def feed(request):
     user = request.user
     authors = User.objects.filter(
         following__subscriber=user).prefetch_related("recipes")
-    paginator = Paginator(authors, 3)
+    paginator = Paginator(authors, PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
@@ -81,22 +82,19 @@ def new_recipe(request):
     btn_caption = "Создать рецепт"
     form = RecipeForm(request.POST or None, files=request.FILES or None)
 
-    if request.method == "POST" and form.is_valid():
+    if form.is_valid():
         ingredients_names = request.POST.getlist("nameIngredient")
         ingredients_values = request.POST.getlist("valueIngredient")
-        if len(ingredients_names) == len(ingredients_values):
-            count = len(ingredients_names)
-        else:
-            return redirect("new")
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.save()
-        for i in range(count):
+        ingredict = dict(zip(ingredients_names, ingredients_values))  
+        for i in ingredict:
             RecipeIngredient.add_ingredient(
                 RecipeIngredient,
                 new_recipe.id,
-                ingredients_names[i],
-                ingredients_values[i]
+                i,
+                ingredict[i]
             )
         return redirect("index")
 
@@ -117,32 +115,27 @@ def edit_recipe(request, username, recipe_id):
     user = get_object_or_404(User, username=username)
     recipe_redirect = redirect(
         "recipe", username=user.username, recipe_id=recipe_id)
-    is_breakfast = "breakfast" in recipe.tags
-    is_lunch = "lunch" in recipe.tags
-    is_dinner = "dinner" in recipe.tags
+    is_breakfast = BR in recipe.tags
+    is_lunch = LU in recipe.tags
+    is_dinner = DIN in recipe.tags
     ingredients = RecipeIngredient.objects.filter(recipe_id=recipe_id)
 
     if request.user != user:
         return recipe_redirect
     form = RecipeForm(request.POST or None,
                       files=request.FILES or None, instance=recipe)
-
-    if request.method == "POST" and form.is_valid():
+    if form.is_valid():
         ingredients_names = request.POST.getlist("nameIngredient")
         ingredients_values = request.POST.getlist("valueIngredient")
-        if len(ingredients_names) == len(ingredients_values):
-            count = len(ingredients_names)
-        else:
-            return redirect("edit_recipe",
-                            username=username, recipe_id=recipe_id)
         form.save()
         RecipeIngredient.objects.filter(recipe_id=recipe.id).delete()
-        for i in range(count):
+        ingredict = dict(zip(ingredients_names, ingredients_values))        
+        for i in ingredict:
             RecipeIngredient.add_ingredient(
                 RecipeIngredient,
                 recipe.id,
-                ingredients_names[i],
-                ingredients_values[i]
+                i, 
+                ingredict[i],
             )
         return recipe_redirect
 
@@ -165,10 +158,10 @@ def favorites(request):
     tags, tags_filter = tag_collect(request)
     if tags_filter:
         recipes = Recipe.objects.filter(tags_filter).filter(
-            favorite_recipe__user=user).all()
+            favorite_recipe__user=user)
     else:
-        recipes = Recipe.objects.filter(favorite_recipe__user=user).all()
-    paginator = Paginator(recipes, 3)
+        recipes = Recipe.objects.filter(favorite_recipe__user=user)
+    paginator = Paginator(recipes, 6)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
@@ -182,7 +175,7 @@ def favorites(request):
 @login_required
 def wishlist(request):
     user = request.user
-    recipes = Recipe.objects.filter(wishlist_recipe__user=user).all()
+    recipes = Recipe.objects.filter(wishlist_recipe__user=user)
     context = {"recipes": recipes}
     return render(request, "wishlist.html", context)
 
