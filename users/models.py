@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
 from recipes.models import Recipe
 
 User = get_user_model()
@@ -19,7 +18,7 @@ class Follow(models.Model):
         ]
 
 
-class Favorites(models.Model):
+class Favorite(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="favorite_subscriber")
     recipe = models.ForeignKey(

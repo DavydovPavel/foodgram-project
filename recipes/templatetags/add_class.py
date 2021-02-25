@@ -1,5 +1,6 @@
 from django import template
-from recipes.models import BR, LU, DIN
+
+from recipes.models import BR, DIN, LU
 
 register = template.Library()
 

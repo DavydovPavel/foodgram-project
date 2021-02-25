@@ -3,9 +3,8 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
-
 from recipes.models import Ingredient, Recipe, RecipeIngredient
-from users.models import Favorites, Follow, Wishlist
+from users.models import Favorite, Follow, Wishlist
 
 SUCCESS_RESPONSE = JsonResponse({"success": True})
 FAIL_RESPONSE = HttpResponse()
@@ -14,21 +13,17 @@ FAIL_RESPONSE = HttpResponse()
 @require_http_methods(["POST"])
 def add_favorite(request):
     body = json.loads(request.body)
-    recipe_id = body.get('id', None)
-    user = request.user
-    _, created = Favorites.objects.get_or_create(
-        user_id=user.id, recipe_id=recipe_id)
-    if created and recipe_id is not None:
-        return SUCCESS_RESPONSE
-    else:
-        FAIL_RESPONSE
+    recipe_id = body.get("id", None)
+    if recipe_id is not None:
+        _, created = Favorite.objects.get_or_create(
+            user_id=request.user.id, recipe_id=recipe_id)
+    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
 def remove_favorite(request, recipe_id):
-    user = request.user
-    deleted = Favorites.objects.filter(
-        user_id=user.id, recipe_id=recipe_id).delete()
+    deleted = Favorite.objects.filter(
+        user_id=request.user.id, recipe_id=recipe_id).delete()
     return SUCCESS_RESPONSE if deleted else FAIL_RESPONSE
 
 
@@ -36,20 +31,16 @@ def remove_favorite(request, recipe_id):
 def add_wishlist(request):
     body = json.loads(request.body)
     recipe_id = body.get("id", None)
-    user = request.user
-    _, created = Wishlist.objects.get_or_create(
-        user_id=user.id, recipe_id=recipe_id)
-    if created and recipe_id is not None:
-        return SUCCESS_RESPONSE
-    else:
-        FAIL_RESPONSE
+    if recipe_id is not None:
+        _, created = Wishlist.objects.get_or_create(
+            user_id=request.user.id, recipe_id=recipe_id)
+    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
 def remove_wishlist(request, recipe_id):
-    user = request.user
     deleted = Wishlist.objects.filter(
-        user_id=user.id, recipe_id=recipe_id).delete()
+        user_id=request.user.id, recipe_id=recipe_id).delete()
     return SUCCESS_RESPONSE if deleted else FAIL_RESPONSE
 
 

@@ -1,6 +1,5 @@
 from django import template
-
-from users.models import Favorites, Follow, Wishlist
+from users.models import Favorite, Follow, Wishlist
 
 register = template.Library()
 
@@ -16,7 +15,7 @@ def check_wishlist(recipe, user):
 @register.filter
 def check_favorite(recipe, user):
     """Проверяет добавлен ли рецепт в избранное"""
-    check = Favorites.objects.filter(
+    check = Favorite.objects.filter(
         recipe_id=recipe.id, user_id=user.id).exists()
     return check
 

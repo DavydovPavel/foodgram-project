@@ -2,12 +2,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-
 from foodgram.settings import PER_PAGE
 
 from .forms import RecipeForm
 from .helper import tag_collect
-from .models import Recipe, RecipeIngredient
+from .models import BR, DIN, LU, Recipe, RecipeIngredient
 
 User = get_user_model()
 
@@ -88,7 +87,7 @@ def new_recipe(request):
         new_recipe = form.save(commit=False)
         new_recipe.author = request.user
         new_recipe.save()
-        ingredict = dict(zip(ingredients_names, ingredients_values))  
+        ingredict = dict(zip(ingredients_names, ingredients_values))
         for i in ingredict:
             RecipeIngredient.add_ingredient(
                 RecipeIngredient,
@@ -115,9 +114,9 @@ def edit_recipe(request, username, recipe_id):
     user = get_object_or_404(User, username=username)
     recipe_redirect = redirect(
         "recipe", username=user.username, recipe_id=recipe_id)
-    is_breakfast = BR in recipe.tags
-    is_lunch = LU in recipe.tags
-    is_dinner = DIN in recipe.tags
+    is_breakfast = BR
+    is_lunch = LU
+    is_dinner = DIN
     ingredients = RecipeIngredient.objects.filter(recipe_id=recipe_id)
 
     if request.user != user:
@@ -129,12 +128,12 @@ def edit_recipe(request, username, recipe_id):
         ingredients_values = request.POST.getlist("valueIngredient")
         form.save()
         RecipeIngredient.objects.filter(recipe_id=recipe.id).delete()
-        ingredict = dict(zip(ingredients_names, ingredients_values))        
+        ingredict = dict(zip(ingredients_names, ingredients_values))
         for i in ingredict:
             RecipeIngredient.add_ingredient(
                 RecipeIngredient,
                 recipe.id,
-                i, 
+                i,
                 ingredict[i],
             )
         return recipe_redirect
@@ -178,11 +177,3 @@ def wishlist(request):
     recipes = Recipe.objects.filter(wishlist_recipe__user=user)
     context = {"recipes": recipes}
     return render(request, "wishlist.html", context)
-
-
-def page_not_found(request, exception):
-    return render(request, "misc/404.html", {"path": request.path}, status=404)
-
-
-def server_error(request):
-    return render(request, "misc/500.html", status=500)
