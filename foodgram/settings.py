@@ -1,13 +1,12 @@
 import os
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'pc)j#bh*7c70n)w1+6(0mct%0*u2q1+xn6g9ewc)hb4npi-v1^'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'api',
@@ -63,6 +62,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 """ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -115,4 +115,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-SITE_ID = 1
+SITE_ID = 0
+
+PER_PAGE = 6

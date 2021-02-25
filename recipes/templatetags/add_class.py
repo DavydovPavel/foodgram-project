@@ -1,5 +1,7 @@
 from django import template
 
+from recipes.models import BR, DIN, LU
+
 register = template.Library()
 
 
@@ -14,8 +16,8 @@ def class_tag(tag):
     """Возвращает необходимое поле class
     для кнопки включения/выключения тега"""
     classes = {
-        "breakfast": "badge badge_style_orange",
-        "lunch": "badge badge_style_green",
-        "dinner": "badge badge_style_purple",
+        BR: "badge badge_style_orange",
+        LU: "badge badge_style_green",
+        DIN: "badge badge_style_purple",
     }
     return classes[tag]
