@@ -13,11 +13,14 @@ FAIL_RESPONSE = HttpResponse()
 @require_http_methods(["POST"])
 def add_favorite(request):
     body = json.loads(request.body)
-    recipe_id = body.get("id", None)
+    recipe_id = body.get("id")
     if recipe_id is not None:
         _, created = Favorite.objects.get_or_create(
             user_id=request.user.id, recipe_id=recipe_id)
-    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
+        if created:
+            return SUCCESS_RESPONSE
+        return FAIL_RESPONSE 
+    return FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
@@ -30,11 +33,14 @@ def remove_favorite(request, recipe_id):
 @require_http_methods(["POST"])
 def add_wishlist(request):
     body = json.loads(request.body)
-    recipe_id = body.get("id", None)
+    recipe_id = body.get("id")
     if recipe_id is not None:
         _, created = Wishlist.objects.get_or_create(
             user_id=request.user.id, recipe_id=recipe_id)
-    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
+        if created:
+            return SUCCESS_RESPONSE
+        return FAIL_RESPONSE 
+    return FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])
@@ -47,12 +53,15 @@ def remove_wishlist(request, recipe_id):
 @require_http_methods(["POST"])
 def add_subscription(request):
     body = json.loads(request.body)
-    following_id = body.get("id", None)
+    following_id = body.get("id")
     user = request.user
     if user.id != following_id and following_id is not None:
         _, created = Follow.objects.get_or_create(
             subscriber_id=user.id, following_id=following_id)
-    return SUCCESS_RESPONSE if created else FAIL_RESPONSE
+        if created:
+            return SUCCESS_RESPONSE
+        return FAIL_RESPONSE 
+    return FAIL_RESPONSE
 
 
 @require_http_methods(["DELETE"])

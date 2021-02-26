@@ -160,7 +160,7 @@ def favorites(request):
             favorite_recipe__user=user)
     else:
         recipes = Recipe.objects.filter(favorite_recipe__user=user)
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
