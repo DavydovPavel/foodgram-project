@@ -5,11 +5,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - ./.env
   web:
-    build: . 
-    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
+    image: pavelmd/foodgram:latest
     restart: always
+    command: gunicorn api_yamdb.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/static/
     ports:
@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env
+      - ./.env
   nginx:
     image: nginx:latest
     restart: always
