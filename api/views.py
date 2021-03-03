@@ -105,6 +105,7 @@ def get_wishlist(request):
         wishlist.append(f"{k.title} - {v} {k.dimension} \n")
     wishlist.append("\n\n\n\n")
 
-    response = HttpResponse(wishlist, content_type='application/txt')#"Content-Type: text/plain")
+    response = HttpResponse(wishlist, content_type='application/txt')
+    # "Content-Type: text/plain")
     response["Content-Disposition"] = 'attachment; filename="wishlist.txt"'
     return response
