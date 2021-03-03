@@ -9,7 +9,7 @@ services:
   web:
     image: pavelmd/foodgram:latest
     restart: always
-    command: gunicorn api_yamdb.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/static/
     ports:
