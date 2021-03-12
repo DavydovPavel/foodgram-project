@@ -1,18 +1,20 @@
 import os
 from dotenv import load_dotenv 
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True #False
+DEBUG = True#False
 
 ALLOWED_HOSTS = [
     #"84.201.179.82",
-    "localhost",
-    "127.0.0.1",
+    #"localhost",
+    #"127.0.0.1",
     "*"
     ]
 
@@ -123,6 +125,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-SITE_ID = 0
+SITE_ID = 1
 
 PER_PAGE = 6
