@@ -5,7 +5,7 @@ volumes:
   static_volume:
   media_volume:
 
-    services:
+services:
   db:
     image: postgres:12.4
     volumes:
@@ -14,7 +14,8 @@ volumes:
       - .env
     
   web:
-    build: .
+    image: pavelmd/foodgram
+    #build: .
     restart: always
     #command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py makemigrations --noinput && python3 manage.py migrate --noinput && python manage.py loaddata ingredients.json && gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000"
     volumes:
