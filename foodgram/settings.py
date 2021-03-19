@@ -9,7 +9,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True#False
+DEBUG = False
 
 ALLOWED_HOSTS = [
     #"84.201.179.82",
@@ -65,14 +65,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
+""" 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-'''
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -83,7 +83,6 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
-'''
 
 
 AUTH_PASSWORD_VALIDATORS = [
