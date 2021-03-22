@@ -17,8 +17,8 @@ services:
     image: pavelmd/foodgram
     restart: always
     volumes:
-      - static_volume:/static/ #for prod - /code/static/
-      - media_volume:/media/ #           - /code/media/
+      - static_volume:/code/static/
+      - media_volume:/code/media/
     ports:
       - "8000:8000"
     depends_on:
