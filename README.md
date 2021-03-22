@@ -1,2 +1,1 @@
-# foodgram-project
-foodgram-project
+![GITHUB-BADGE](https://github.com/DavydovPavel/foodgram-project/actions/workflows/foodgram_workflow.yaml/badge.svg)
