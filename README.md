@@ -32,10 +32,10 @@ SECRET_KEY можно сгенерировать по [ссылке](http://djec
  3. В директории проекта выполните
 
     ```
-    - docker-compose up 										#собираем и запускаем контейнеры проекта в 																									#docker
-    - docker-compose exec web python manage.py migrate 			#выполняем миграции
-    - docker-compose exec web python manage.py collectstatic 	#собираем статику
-    - docker-compose exec web python manage.py createsuperuser  #создаем суперпользователя
+    - docker-compose up #собираем и запускаем контейнеры проекта в docker
+    - docker-compose exec web python manage.py migrate #выполняем миграции
+    - docker-compose exec web python manage.py collectstatic #собираем статику
+    - docker-compose exec web python manage.py createsuperuser #создаем суперпользователя
     ```
 
 Пример работы проекта можно увидеть [по этому адресу](http://84.201.179.82/)
