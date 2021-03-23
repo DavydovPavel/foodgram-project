@@ -130,4 +130,5 @@ dmypy.json
 
 /media
 /.github
-static*/
+/static
+recipes/static
