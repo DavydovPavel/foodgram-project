@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'users',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'ckeditor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
