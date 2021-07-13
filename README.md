@@ -1,4 +1,4 @@
-# [Foodgram-project](http://84.201.179.82/)
+# Foodgram-project <!-- (http://84.201.179.82/) -->
 
 ## Проект Foodgram-project - "Продуктовый помощник".
 
